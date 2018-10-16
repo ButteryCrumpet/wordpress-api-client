@@ -3,7 +3,7 @@ export enum Order {
   ASC = "asc"
 }
 
-export enum OrderBy {
+export enum PostOrderBy {
   AUTHOR = "author",
   DATE = "date",
   ID = "id",
@@ -15,7 +15,7 @@ export enum OrderBy {
   TITLE = "title"
 }
 
-type PostQueryArgValue = string | number | number[] | Order | OrderBy | undefined
+type PostQueryArgValue = string | number | number[] | Order | PostOrderBy | undefined
 export interface PostQueryArgs {
   [key: string]: PostQueryArgValue
   type?: string
@@ -35,9 +35,51 @@ export interface PostQueryArgs {
   include?: number[]
   offset?: number
   order?: Order
-  orderby?: OrderBy
+  orderby?: PostOrderBy
   status?: string
 }
+export enum TermOrderBy {
+  ID = "id",
+  INCLUDE = "include",
+  NAME = "name",
+  SLUG = "slug",
+  TERM_GROUP = "term_group",
+  DESCRIPTION = "description",
+  COUNT = "count"
+}
+
+type TermQueryArgValue
+  = string
+  | boolean
+  | number
+  | number[]
+  | Order 
+  | TermOrderBy 
+  | undefined
+
+export interface TermQueryArgs {
+  [key: string]: TermQueryArgValue
+  type: string
+  term_id?: number
+  page?: number
+  per_page?: number
+  search?: string
+  exclude?: number[]
+  include?: number[]
+  order?: Order
+  orderby?: TermOrderBy
+  hide_empty?: boolean
+  parent?: number
+  slug?: string
+}
+
+type QueryArgs
+  = PostQueryArgs
+  | TermQueryArgs
+
+type QueryArgValue
+  = PostQueryArgValue
+  | TermQueryArgValue
 
 const apiPath = "/wp-json/wp/v2"
 
@@ -49,27 +91,30 @@ export const buildPostQuery: (query: PostQueryArgs, base: string) => string
     return `${base}${apiPath}/${query.type}/${query.p ? query.p : ""}?_embed${queryVars(query, ["p", "type"])}`
   }
 
-const queryVars: (args: PostQueryArgs, skip: string[]) => string
+export const buildTermQuery: (query: TermQueryArgs, base: string) => string
+  = (query, base) => {
+    const id = query.term_id ? query.term_id : ""
+    return `${base}${apiPath}/${query.type}/${id}?_embed${queryVars(query, ["p", "type"])}`
+  }
+
+const queryVars: (args: QueryArgs, skip: string[]) => string
   = (args, skip) => Object.keys(args).reduce((acc: string, key: string) => {
       if (skip.indexOf(key) > -1) {
         return acc
       }
-      return `${acc}&${key}=${argToString(args[key])}`
+      return `${acc}&${argToString(key, args[key])}`
     }, "")
 
-const argToString: (arg: PostQueryArgValue) => string
-  = arg => {
-    if (!arg) {
+const argToString: (key: string, val: QueryArgValue) => string
+  = (key, val) => {
+    if (!val) {
       return ""
     }
-    if (typeof arg === "string") {
-      return arg
+    if (typeof val === "string" || typeof val === "number") {
+      return `${key}=${val}`
     }
-    if (Array.isArray(arg)) {
-      return arg.join(",")
+    if (Array.isArray(val)) {
+      return `${key}=${val.join(",")}`
     }
-    if (typeof arg === "number") {
-      return String(arg)
-    }
-    return arg
+    return key
   }

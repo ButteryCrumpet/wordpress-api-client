@@ -27,7 +27,7 @@ interface Size {
   source: string
   mime: string
 }
-
+const log = (item: any) => { console.log(item); return item }
 export const fromApiObject: (media: any) => BasicMedia
  = media => ({
     alt: assertString(media.alt_text),
@@ -52,7 +52,7 @@ const mediaDetailsFromApiObject: (details: any) => MediaDetails
   = sizes => Object.keys(sizes).reduce((acc: Sizes, size: any) => {
     acc[size] = sizeFromApiObject(sizes[size])
     return acc
-  }, Object.create(null))
+  }, {})
 
 const sizeFromApiObject: (size: any) => Size
   = size => ({

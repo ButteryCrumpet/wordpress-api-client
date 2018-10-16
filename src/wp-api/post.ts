@@ -1,4 +1,4 @@
-import { assertArray, assertNumber, assertString } from "./assert"
+import { assertArray, assertNumber, assertString, safeGet } from "./assert"
 import * as Media from "./media"
 import * as Term from "./term"
 
@@ -12,28 +12,30 @@ export interface BasicPost {
   readonly title: string
   readonly content: string
   readonly excerpt: string
-  readonly categories: Term.BasicTerm[]
-  readonly tags: Term.BasicTerm[]
+  readonly categories: Term.EmbedTerm[]
+  readonly tags: Term.EmbedTerm[]
   thumbnail?: Media.BasicMedia
 }
 
 export const fromAPIObject: (input: any) => BasicPost
   = input => {
-    const terms = termFactory(filterEmpty(assertArray(input._embedded["wp:term"])))
+    const categoryData = extractCategories(input)
+    const tagData = extractTags(input)
     const post: BasicPost = {
-      categories: filterCategory(terms),
-      content: assertString(input.content.rendered),
-      date: new Date(),
-      excerpt: assertString(input.excerpt.rendered),
-      id: assertNumber(input.id),
-      modified: new Date(),
-      slug: assertString(input.slug),
-      status: assertString(input.status),
-      tags: filterTag(terms),
-      title: assertString(input.title.rendered),
-      type: assertString(input.type),
+      categories: termFactory(assertArray(categoryData, "In post categories")),
+      content: assertString(input.content.rendered, "In post content"),
+      date: new Date(assertString(input.date)),
+      excerpt: assertString(input.excerpt.rendered, "In post excerpt"),
+      id: assertNumber(input.id, "In post ID"),
+      modified: new Date(assertString(input.modified)),
+      slug: assertString(input.slug, "In post slug"),
+      status: assertString(input.status, "In post status"),
+      tags: termFactory(assertArray(tagData, "In post tags")),
+      title: assertString(input.title.rendered, "In post title"),
+      type: assertString(input.type, "In post type"),
     }
-    if (input._embedded["wp:featuredmedia"]["0"]) {
+    const thumb = extractThumb(input)
+    if (thumb) {
       post.thumbnail = Media.fromApiObject(input._embedded["wp:featuredmedia"]["0"])
     }
     return post;
@@ -42,14 +44,9 @@ export const fromAPIObject: (input: any) => BasicPost
 const map: <T, R>(f: (item: T) => R) => (arr: T[]) => R[]
   = func => input => input.map(func)
 
-const filter: <T>(f: (item: T) => boolean) => (arr: T[]) => T[]
-  = func => input => input.filter(func)
+const toEmbedTerm = (input: any) => Term.fromEmbedApiObject(input)
+const termFactory = map(toEmbedTerm)
 
-const filterEmpty = filter((arr: any[]) => arr.length > 0)
-
-
-const toBasicTerm = (input: any) => Term.fromApiObject(input['0'])
-const termFactory = map(toBasicTerm)
-
-const filterCategory = filter(Term.isCategory)
-const filterTag = filter(Term.isTag)
+const extractCategories = safeGet(["_embedded", "wp:term", "0"])
+const extractTags = safeGet(["_embedded", "wp:term", "1"])
+const extractThumb = safeGet(["_embedded", "wp:featuredmedia", "0"])
