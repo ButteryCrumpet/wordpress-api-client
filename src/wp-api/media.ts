@@ -1,4 +1,4 @@
-import {assertString, assertNumber, assertArray} from "./assert"
+import { assertArray, assertNumber, assertString } from "./assert"
 
 export interface BasicMedia {
   id: number
@@ -30,22 +30,22 @@ interface Size {
 
 export const fromApiObject: (media: any) => BasicMedia
  = media => ({
-    id: assertNumber(media.id),
-    date: new Date(assertString(media.date)),
-    slug: assertString(media.slug),
-    caption: assertString(media.caption.rendered),
     alt: assertString(media.alt_text),
-    type: assertString(media.media_type),
-    mime: assertString(media.mime_type),
+    caption: assertString(media.caption.rendered),
+    date: new Date(assertString(media.date)),
     details: mediaDetailsFromApiObject(media.media_details),
-    source: assertString(media.source_url)
+    id: assertNumber(media.id),
+    mime: assertString(media.mime_type),
+    slug: assertString(media.slug),
+    source: assertString(media.source_url),
+    type: assertString(media.media_type),
  })
 
 const mediaDetailsFromApiObject: (details: any) => MediaDetails
  = details => ({
-   width: assertNumber(details.width),
    height: assertNumber(details.height),
-   sizes: sizesFromApiObject(details.sizes)
+   sizes: sizesFromApiObject(details.sizes),
+   width: assertNumber(details.width),
  })
 
  const sizesFromApiObject: (sizes: any) => Sizes
@@ -57,8 +57,8 @@ const mediaDetailsFromApiObject: (details: any) => MediaDetails
 const sizeFromApiObject: (size: any) => Size
   = size => ({
     file: assertString(size.file),
-    width: assertNumber(size.width),
     height: assertNumber(size.height),
+    mime: assertString(size.mime_type),
     source: assertString(size.source_url),
-    mime: assertString(size.mime_type)
+    width: assertNumber(size.width),
   })

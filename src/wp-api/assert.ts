@@ -1,16 +1,16 @@
 
-export type test<T> = (data: unknown) => boolean
-const isString: test<string> = data => typeof data === "string"
-const isNumber: test<number> = data => typeof data === "number"
-const isArray: test<any[]> = data => Array.isArray(data)
+export type TypeGuard<T> = (data: unknown) => boolean
+const isString: TypeGuard<string> = data => typeof data === "string"
+const isNumber: TypeGuard<number> = data => typeof data === "number"
+const isArray: TypeGuard<any[]> = data => Array.isArray(data)
 
-export function is<T>(data: unknown, test: test<T>): data is T {
-  return test(data)
+export function is<T>(data: unknown, guard: TypeGuard<T>): data is T {
+  return guard(data)
 }
 
-export const assert: <T>(test: test<T>) => (data: unknown) => T
-  = test => data => {
-    if (is(data, test)) {
+export const assert: <T>(guard: TypeGuard<T>) => (data: unknown) => T
+  = guard => data => {
+    if (is(data, guard)) {
       return data
     }
     throw new Error(`Malformed Input: ${data}`)

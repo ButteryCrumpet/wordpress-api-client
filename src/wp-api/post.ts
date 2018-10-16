@@ -1,6 +1,6 @@
-import {assertString, assertNumber, assertArray} from "./assert"
-import * as Term from "./term"
+import { assertArray, assertNumber, assertString } from "./assert"
 import * as Media from "./media"
+import * as Term from "./term"
 
 export interface BasicPost {
   readonly id: number
@@ -21,17 +21,17 @@ export const fromAPIObject: (input: any) => BasicPost
   = input => {
     const terms = termFactory(filterEmpty(assertArray(input._embedded["wp:term"])))
     const post: BasicPost = {
+      categories: filterCategory(terms),
+      content: assertString(input.content.rendered),
+      date: new Date(),
+      excerpt: assertString(input.excerpt.rendered),
       id: assertNumber(input.id),
+      modified: new Date(),
       slug: assertString(input.slug),
       status: assertString(input.status),
-      type: assertString(input.type),
-      title: assertString(input.title.rendered),
-      content: assertString(input.content.rendered),
-      excerpt: assertString(input.excerpt.rendered),
-      date: new Date(),
-      modified: new Date(),
-      categories: filterCategory(terms),
       tags: filterTag(terms),
+      title: assertString(input.title.rendered),
+      type: assertString(input.type),
     }
     if (input._embedded["wp:featuredmedia"]["0"]) {
       post.thumbnail = Media.fromApiObject(input._embedded["wp:featuredmedia"]["0"])

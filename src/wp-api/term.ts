@@ -1,4 +1,4 @@
-import {assertString, assertNumber} from "./assert"
+import {assertNumber, assertString} from "./assert"
 
 export interface BasicTerm {
   readonly id: number
