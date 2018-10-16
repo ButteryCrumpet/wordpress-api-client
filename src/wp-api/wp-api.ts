@@ -12,38 +12,45 @@ export enum ErrorType {
 
 type Callback<T> = (result: Result<T, ErrorType>) => any
 
-export class NetworkError extends Error {}
+class NetworkError extends Error {}
 
 export const PostQuery: (base: string) => (callback: Callback<Post.BasicPost[]>) => (args: Query.PostQueryArgs) => void
   = base => callback => args => {
     const url = Query.buildPostQuery(args, base)
     fetch(url)
-      .then((response: Response) => {
-        if (!response) {
-         throw new NetworkError("No Response")
-        }
-        if (!response.ok) {
-         throw new Error(response.statusText)
-        }
-        return response.json()
-      })
-      .then((data: any) => {
-        if (!Array.isArray(data)) {
-          data = [data]
-        }
-        const posts = data.map((post: any) => {
-          return Post.fromAPIObject(post);
-        });
-        callback({value: posts})
-      })
-      .catch((error: Error) => {
-        let type = ErrorType.FETCH_ERROR
-        if (error instanceof NetworkError) {
-          type = ErrorType.NO_RESPONSE
-        }
-        if (error instanceof TypeError) {
-          type = ErrorType.PARSE_ERROR
-        }
-        callback({type, message: error.message})
-      })
+      .then(toJson)
+      .then(parsePosts)
+      .then(data => callback({value: data}))
+      .catch((error: Error) => callback(getError(error)))
   }
+
+export const TaxQuery = () => "TODO"
+
+const toJson: (response: Response) => Promise<any>
+  = response => {
+    if (!response) {
+     throw new NetworkError("No Response")
+    }
+    if (!response.ok) {
+     throw new Error(response.statusText)
+    }
+    return response.json()
+  }
+
+const parsePosts: (data: any) => Post.BasicPost[]
+  = data => {
+    data = Array.isArray(data) ? data : [data]
+    return data.map((post: any) => Post.fromAPIObject(post))
+  }
+
+const getError: (error: Error) => {type: ErrorType, message: string}
+ = error => {
+    let type = ErrorType.FETCH_ERROR
+    if (error instanceof NetworkError) {
+      type = ErrorType.NO_RESPONSE
+    }
+    if (error instanceof TypeError) {
+      type = ErrorType.PARSE_ERROR
+    }
+    return {type, message: error.message}
+ }
