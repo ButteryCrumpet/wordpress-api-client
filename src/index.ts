@@ -14,3 +14,6 @@ export class WPClient {
     this.getTerms = TermQuery(base)
   } 
 }
+
+export { isError, isOk, unwrap } from "./wp-api/result"
+export default WPClient
