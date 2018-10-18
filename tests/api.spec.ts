@@ -19,7 +19,7 @@ FetchMock
     status: 500,
   })
 
-describe("fetch mock test", () => {
+describe("post fetch test", () => {
 
   test("it runs on 200", done => {
     const test = (result: any) => {

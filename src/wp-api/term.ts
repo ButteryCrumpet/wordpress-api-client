@@ -8,7 +8,7 @@ export interface EmbedTerm {
   readonly taxonomy: string
 }
 
-interface Term {
+export interface Term {
   readonly id: number
   readonly count: number
   readonly link: string
@@ -16,18 +16,19 @@ interface Term {
   readonly slug: string
   readonly description: string
   readonly parent: number
+  readonly type: string
 }
 
 export const fromApiObject: (input: any) => Term
  = input => ({
-    count: assertNumber(input.count),
-    description: assertString(input.description),
-    id: assertNumber(input.id),
-    link: assertString(input.link),
-    name: assertString(input.name),
-    parent: assertNumber(input.parent),
-    slug: assertString(input.slug),
-    type: assertString(input.taxonomy),
+    count: assertNumber(input.count, "In term count"),
+    description: assertString(input.description, "In term description"),
+    id: assertNumber(input.id, "In term id"),
+    link: assertString(input.link, "In term link"),
+    name: assertString(input.name, "In term name"),
+    parent: assertNumber(input.parent, "In term parent"),
+    slug: assertString(input.slug, "In term slug"),
+    type: assertString(input.taxonomy, "In term type"),
  })
 
 export const fromEmbedApiObject: (input: any) => EmbedTerm
