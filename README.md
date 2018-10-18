@@ -31,7 +31,7 @@ Currently only offers access to Posts and Terms following the standard schema \
 ### -- Example
 
 ```typescript
-import {WPClient, unwrap} from "pp-wapi"
+import { WPClient, unwrap } from "pp-wapi"
 
 // Instantiate client
 const client = new WPClient("www.testwp.com")
