@@ -46,6 +46,7 @@ const postExpected: Post.BasicPost = {
   date:	new Date("2018-10-15T08:00:06"),
   modified:	new Date("2018-10-12T16:06:41"),
   slug:	"star-wars-deep-dive-why-…to-the-imperial-academy",
+  link: "https://www.starwars.com…-to-the-imperial-academy",
   status:	"publish",
   type:	"post",
   title: "The <em>Star Wars</em> D…o the Imperial Academy?",

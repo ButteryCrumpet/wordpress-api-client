@@ -6,6 +6,7 @@ export interface BasicPost {
   readonly id: number
   readonly date: Date
   readonly modified: Date
+  readonly link: string
   readonly slug: string
   readonly status: string
   readonly type: string
@@ -24,6 +25,7 @@ export const fromAPIObject: (input: any) => BasicPost
     const post: BasicPost = {
       categories: termFactory(assertArray(categoryData, "In post categories")),
       content: assertString(input.content.rendered, "In post content"),
+      link: assertString(input.link, "In post link"),
       date: new Date(assertString(input.date)),
       excerpt: assertString(input.excerpt.rendered, "In post excerpt"),
       id: assertNumber(input.id, "In post ID"),
