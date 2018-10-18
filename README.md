@@ -17,11 +17,11 @@ Currently only offers access to Posts and Terms following the standard schema \
 
 * Currently getPosts and getTerms are *curried* 
     * To call them either pass in callback then args like so: 
-        ```
+        ```typescript
         WPClient::getPosts(callback)(args)
         ``` 
     * Or save to a variable: 
-        ```
+        ```typescript
         const query = WPClient::getPosts(callback)
         query(args)
         ``` 
@@ -30,7 +30,7 @@ Currently only offers access to Posts and Terms following the standard schema \
 
 ### -- Example
 
-```
+```typescript
 import {WPClient, unwrap} from "pp-wapi"
 
 // Instantiate client
@@ -50,45 +50,45 @@ client.getPosts(callback)(args)
 
 ### -- Post Query Possible Args
 
-```
+```typescript
 PostQueryArgs {
-  type: string
-  page: number
-  per_page: number
-  p: number
-  slug: string
-  search: string
-  after: string
-  categories: number[]
-  categories_exclude: number[]
-  tags: number[]
-  tags_exclude: number[]
-  author: number[]
-  author_exclude: number[]
-  exclude: number[]
-  include: number[]
-  offset: number
-  order: Order
-  orderby: PostOrderBy
-  status: string
+  type?: string
+  page?: number
+  per_page?: number
+  p?: number
+  slug?: string
+  search?: string
+  after?: string
+  categories?: number[]
+  categories_exclude?: number[]
+  tags?: number[]
+  tags_exclude?: number[]
+  author?: number[]
+  author_exclude?: number[]
+  exclude?: number[]
+  include?: number[]
+  offset?: number
+  order?: Order
+  orderby?: PostOrderBy
+  status?: string
 }
 ```
 
 ### -- Term Query Possible Args
 
-```
+```typescript
 TermQueryArgs {
   type: string
-  term_id: number
-  page: number
-  per_page: number
-  search: string
-  exclude: number[]
-  include: number[]
-  order: Order
-  orderby: TermOrderBy
-  hide_empty: boolean
-  parent: number
-  slug: string
+  term_id?: number
+  page?: number
+  per_page?: number
+  search?: string
+  exclude?: number[]
+  include?: number[]
+  order?: Order
+  orderby?: TermOrderBy
+  hide_empty?: boolean
+  parent?: number
+  slug?: string
 }
 ```
