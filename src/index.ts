@@ -15,7 +15,7 @@ export class WPClient {
   }
 }
 
-export { ErrorType } from "./wp-api/wp-api";
+export { ErrorType, Callback, WPResponse } from "./wp-api/wp-api";
 export { Result, isError, isOk, unwrap } from "./wp-api/result";
 export { BasicPost } from "./wp-api/post";
 export { EmbedTerm, Term } from "./wp-api/term";

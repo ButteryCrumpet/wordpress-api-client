@@ -17,14 +17,14 @@ type QueryFactory
   => (base: string) 
   => Query<T, Q>
 
-type Callback<T> = (result: Result<WPResponse<T>, ErrorType>) => any
+export type Callback<T> = (result: Result<WPResponse<T>, ErrorType>) => any
 type Parser<T> = (input: WPResponse<any>) => WPResponse<T>
 type QueryBuilder<T> = (input: T, base: string) => string
 interface QueryMeta {
   count: number | undefined,
   totalPages: number | undefined
 }
-interface WPResponse<T> {
+export interface WPResponse<T> {
   meta: QueryMeta,
   content: T
 }
