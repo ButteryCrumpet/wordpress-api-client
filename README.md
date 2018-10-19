@@ -11,7 +11,22 @@ Currently only offers access to Posts and Terms following the standard schema \
 
 1. Instantiate a WPClient instance passing in your wordpress site's url
 2. Call either WPClient::getPosts or WPClient::getTerms passing in a callback and args
-3. Receive Result<T, Err> and check with isOk / isErr or unwrap() to get value
+3. Receive Result<WPResponse<T>, Err> and check with isOk / isErr or unwrap() to get value
+
+A WPResponse contains meta data about the query as well as the received content
+```typescript
+interface WPResponse<T> {
+    meta: QueryMeta
+    content: T // currently either BasicPost[] or Term[]
+}
+
+// not in all queries so possibility to be undefined, will move to Maybe<T> in the future
+interface QueryMeta {
+  count: number | undefined,
+  totalPages: number | undefined
+}
+
+```
 
 ### -- Notes
 
@@ -51,7 +66,7 @@ client.getPosts(callback)(args)
 ### -- Post Query Possible Args
 
 ```typescript
-PostQueryArgs {
+interface PostQueryArgs {
   type?: string
   page?: number
   per_page?: number
@@ -77,7 +92,7 @@ PostQueryArgs {
 ### -- Term Query Possible Args
 
 ```typescript
-TermQueryArgs {
+interface TermQueryArgs {
   type: string
   term_id?: number
   page?: number
