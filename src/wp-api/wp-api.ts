@@ -17,12 +17,19 @@ type QueryFactory
   => (base: string) 
   => Query<T, Q>
 
-type Callback<T> = (result: Result<T, ErrorType>) => any
-type Parser<T> = (input: any) => T
+type Callback<T> = (result: Result<WPResponse<T>, ErrorType>) => any
+type Parser<T> = (input: WPResponse<any>) => WPResponse<T>
 type QueryBuilder<T> = (input: T, base: string) => string
+interface QueryMeta {
+  count: number | undefined,
+  totalPages: number | undefined
+}
+interface WPResponse<T> {
+  meta: QueryMeta,
+  content: T
+}
 
 class NetworkError extends Error {}
-
 
 const query: QueryFactory
  = (parser, queryBuilder) => base => callback => args => {
@@ -36,27 +43,35 @@ const query: QueryFactory
 
 const cachedFetch = MemoryCache((url: string) => fetch(url))
 
-const toJson: (response: Response) => Promise<any>
+const toJson: (response: Response) => Promise<WPResponse<any>>
   = response => {
     if (!response) {
      throw new NetworkError("No Response")
     }
     if (!response.ok) {
      throw new Error(response.statusText)
-    }
-    return response.json()
+    }   
+    return response.json().then(data => {
+      return {
+        meta: {
+          count: parseInt(getHeaderOrDefault(response, "x-wp-total", "-1"), 10),
+          totalPages: parseInt(getHeaderOrDefault(response, "x-wp-totalpages", "-1"), 10)
+        },
+        content: data
+      }
+    })
   }
 
 const parsePosts: Parser<Post.BasicPost[]>
-  = data => {
-    data = Array.isArray(data) ? data : [data]
-    return data.map((post: any) => Post.fromAPIObject(post))
+  = r => {
+    const data = Array.isArray(r.content) ? r.content : [r.content]
+    return {...r, content: data.map((term: any) => Post.fromApiObject(term))}
   }
 
 const parseTerms: Parser<Term.Term[]>
-  = data => {
-    data = Array.isArray(data) ? data : [data]
-    return data.map((term: any) => Term.fromApiObject(term))
+  = r => {
+    const data = Array.isArray(r.content) ? r.content : [r.content]
+    return {...r, content: data.map((term: any) => Term.fromApiObject(term))}
   }
 
 const getError: (error: Error) => {type: ErrorType, message: string}
@@ -69,6 +84,12 @@ const getError: (error: Error) => {type: ErrorType, message: string}
       type = ErrorType.PARSE_ERROR
     }
     return {type, message: error.message}
+ }
+
+const getHeaderOrDefault: (resp: Response, name: string, def: string) => string
+ = (r, n, d) => {
+   const maybeVal = r.headers.get(n)
+   return maybeVal ? maybeVal : d
  }
 
 // Queries

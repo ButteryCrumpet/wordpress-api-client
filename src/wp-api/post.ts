@@ -18,7 +18,7 @@ export interface BasicPost {
   thumbnail?: Media.BasicMedia
 }
 
-export const fromAPIObject: (input: any) => BasicPost
+export const fromApiObject: (input: any) => BasicPost
   = input => {
     const categoryData = extractCategories(input)
     const tagData = extractTags(input)

@@ -23,7 +23,7 @@ describe("post fetch test", () => {
 
   test("it runs on 200", done => {
     const test = (result: any) => {
-      expect(result.value).toEqual([post.expected])
+      expect(result.value.content).toEqual([post.expected])
       done()
     }
     WP.PostQuery("www.test.com")(test)({type: "posts"})
