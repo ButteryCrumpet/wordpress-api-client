@@ -21,7 +21,7 @@ export const embedMedia = {
       sizes: {
         thumbnail: {
           file:	"new-hope-luke-x-wing-pilot-1-150x150.jpg",
-          width:	150,
+          width:	"150",
           height:	150,
           mime_type:	"image/jpeg",
           source_url:	"https://starwarsblog.starwars.com/wp-content/uploads/2018/08/new-hope-luke-x-wing-pilot-1-150x150.jpg"
