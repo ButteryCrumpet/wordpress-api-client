@@ -1,5 +1,5 @@
 export type Result<T, E> = Ok<T> | Error<E>
-
+// Error type E unecessary, force good error messages
 interface Ok<T> {
   readonly value: T
 }

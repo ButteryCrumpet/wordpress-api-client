@@ -30,22 +30,22 @@ interface Size {
 const log = (item: any) => { console.log(item); return item }
 export const fromApiObject: (media: any) => BasicMedia
  = media => ({
-    alt: assertString(media.alt_text),
-    caption: assertString(media.caption.rendered),
-    date: new Date(assertString(media.date)),
+    alt: assertString(media.alt_text, "alt must be string"),
+    caption: assertString(media.caption.rendered, "caption must be string"),
+    date: new Date(assertString(media.date, "date must be string")),
     details: mediaDetailsFromApiObject(media.media_details),
-    id: assertNumber(media.id),
-    mime: assertString(media.mime_type),
-    slug: assertString(media.slug),
-    source: assertString(media.source_url),
-    type: assertString(media.media_type),
+    id: assertNumber(media.id, "id must be number"),
+    mime: assertString(media.mime_type, "mime type must be string"),
+    slug: assertString(media.slug, "slug must be string"),
+    source: assertString(media.source_url, "source must be string"),
+    type: assertString(media.media_type, "type must be string"),
  })
 
 const mediaDetailsFromApiObject: (details: any) => MediaDetails
  = details => ({
-   height: assertNumber(details.height),
+   height: assertNumber(details.height, "height must be number"),
    sizes: sizesFromApiObject(details.sizes),
-   width: assertNumber(details.width),
+   width: assertNumber(details.width, "width must be number"),
  })
 
  const sizesFromApiObject: (sizes: any) => Sizes
@@ -56,9 +56,9 @@ const mediaDetailsFromApiObject: (details: any) => MediaDetails
 
 const sizeFromApiObject: (size: any) => Size
   = size => ({
-    file: assertString(size.file),
-    height: assertNumber(size.height),
-    mime: assertString(size.mime_type),
-    source: assertString(size.source_url),
-    width: assertNumber(size.width),
+    file: assertString(size.file, "file must be string"),
+    height: assertNumber(parseInt(size.height, 10), "height must be string"),
+    mime: assertString(size.mime_type, "mime type must be string"),
+    source: assertString(size.source_url, "source_url must be string"),
+    width: assertNumber(parseInt(size.width, 10), "width must be string"),
   })

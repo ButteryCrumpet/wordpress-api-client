@@ -16,7 +16,7 @@ export const assert: <T>(guard: TypeGuard<T>) => (data: unknown, message?: strin
     if (is(data, guard)) {
       return data
     }
-    throw new TypeError(`Malformed Input: ${data}. "${message}"`)
+    throw new TypeError(`Malformed Input: ${data} of type ${typeof data}. "${message}"`)
   }
 
 export const assertString = assert(isString)
