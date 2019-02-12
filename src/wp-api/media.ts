@@ -43,9 +43,9 @@ export const fromApiObject: (media: any) => BasicMedia
 
 const mediaDetailsFromApiObject: (details: any) => MediaDetails
  = details => ({
-   height: assertNumber(details.height, "height must be number"),
+   height: assertNumber(parseInt(details.height, 10), "height must be number"),
    sizes: sizesFromApiObject(details.sizes),
-   width: assertNumber(details.width, "width must be number"),
+   width: assertNumber(parseInt(details.width, 10), "width must be number"),
  })
 
  const sizesFromApiObject: (sizes: any) => Sizes
